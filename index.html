@@ -192,6 +192,38 @@
 
     initHome()
   </script>
+    <!-- SCRIPT POUR LES ANIMATIONS AU SCROLL -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // On attend un peu que la page charge
+      setTimeout(() => {
+        // 1. On sélectionne toutes les sections et les cartes
+        const elements = document.querySelectorAll('section, .group');
+        
+        // 2. On les rend invisibles au départ
+        elements.forEach(el => {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(20px)';
+          el.style.transition = 'opacity 1s ease-out, transform 1s ease-out';
+        });
+
+        // 3. On crée l'observateur (qui regarde si l'élément est à l'écran)
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              // Si l'élément est visible, on l'affiche
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+
+        // 4. On dit à l'observateur de surveiller chaque élément
+        elements.forEach(el => observer.observe(el));
+      }, 100);
+    });
+  </script>
   <script type="module" src="assets/js/animations.js"></script>
 </body>
 </html>
