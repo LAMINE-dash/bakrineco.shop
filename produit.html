@@ -4,21 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produit — Bakrine & Co</title>
-  <meta name="description" content="Découvrez ce produit de la collection Bakrine & Co.">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
   
+  <!-- SÉCURITÉ ASSOUPLIE (autorise Google Fonts et Lucide) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    h1, h2, h3, .font-serif { font-family: 'Cormorant Garamond', serif !important; }
+  </style>
 </head>
 <body class="bg-cream text-ink font-sans">
 
   <div id="header"></div>
-  <main class="max-w-7xl mx-auto px-6 py-16 min-h-[60vh]" id="productContent"></main>
+
+  <main class="max-w-7xl mx-auto px-6 py-16 min-h-[60vh]" id="productContent">
+    <div class="flex justify-center items-center h-full">
+      <p class="text-ink/50">Chargement du produit...</p>
+    </div>
+  </main>
+
   <div id="footer"></div>
 
   <!-- DRAWER PANIER -->
-  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60] transition-opacity" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
+  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60]" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
   <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream shadow-2xl z-[70] flex flex-col transition-transform duration-500 translate-x-full">
     <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
       <h2 class="font-serif text-2xl text-forest">Panier <span id="cartDrawerCount" class="text-terracotta">(0)</span></h2>
@@ -33,23 +46,153 @@
           <p id="cartTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
         </div>
       </div>
-      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium transition-colors">Passer commande</a>
+      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium">Passer commande</a>
     </div>
   </aside>
 
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- SCRIPT -->
   <script type="module">
     import { renderHeader, renderFooter } from './assets/js/layout.js'
-    import { initProduct } from './assets/js/produit.js'
-    import { updateCartBadge, renderCartDrawer } from './assets/js/cart.js'
+    import { products, loadData } from './assets/js/products.js'
+    import { addToCart, updateCartBadge, renderCartDrawer, openCart } from './assets/js/cart.js'
 
     renderHeader()
     renderFooter()
-    initProduct().then(() => {
+
+    let currentProduct = null
+    let selectedSize = null
+
+    async function initProduct() {
+      const urlParams = new URLSearchParams(window.location.search)
+      let slug = urlParams.get('slug') || localStorage.getItem('current-slug')
+
+      if (!slug) {
+        document.getElementById('productContent').innerHTML = '<p class="text-center py-20 text-red-500">Erreur : Aucun produit demandé.</p>'
+        return
+      }
+
+      if (products.length === 0) await loadData()
+
+      currentProduct = products.find(p => p.slug === slug)
+
+      if (!currentProduct) {
+        document.getElementById('productContent').innerHTML = '<p class="text-center py-20 text-red-500">Produit introuvable.</p>'
+        return
+      }
+
+      renderProduct()
       updateCartBadge()
       renderCartDrawer()
-      if (window.lucide) window.lucide.createIcons()
-    })
+    }
+
+    function renderProduct() {
+      const container = document.getElementById('productContent')
+      document.title = `${currentProduct.name_fr} — Bakrine & Co`
+
+      const images = currentProduct.product_images?.sort((a, b) => a.position - b.position) || []
+      const mainImage = images[0]?.url || 'assets/images/placeholder.jpg'
+      const thumbnails = images.slice(1)
+      const sizes = currentProduct.product_variants?.map(v => v.size) || []
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          
+          <div class="space-y-6">
+            <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-gold/10">
+              <img id="mainProductImage" src="${mainImage}" alt="${currentProduct.name_fr}" class="w-full h-full object-cover transition-opacity duration-300">
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+              ${thumbnails.map((img, i) => `
+                <button onclick="changeImage('${img.url}', this)" class="aspect-square rounded-lg overflow-hidden bg-gold/10 border-2 border-transparent hover:border-terracotta transition-colors">
+                  <img src="${img.url}" class="w-full h-full object-cover">
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="space-y-8 lg:sticky lg:top-28 self-start">
+            <div>
+              <span class="text-xs tracking-[0.3em] text-terracotta uppercase">${currentProduct.fabric || currentProduct.category}</span>
+              <h1 class="mt-3 text-4xl md:text-5xl text-forest leading-tight">${currentProduct.name_fr}</h1>
+              <div class="mt-4 space-y-1">
+                <p class="text-3xl text-terracotta">${new Intl.NumberFormat('fr-FR').format(currentProduct.price_xof)} FCFA</p>
+                <p class="text-sm text-ink/50">≈ ${currentProduct.price_eur} €</p>
+              </div>
+            </div>
+
+            <div class="w-16 h-px bg-gold"></div>
+            <p class="text-ink/70 leading-relaxed">${currentProduct.description_fr || 'Aucune description.'}</p>
+
+            <div>
+              <p class="text-sm font-medium uppercase tracking-widest mb-3">Taille</p>
+              <div class="flex flex-wrap gap-2" id="sizesContainer">
+                ${sizes.length > 0 ? sizes.map(s => `
+                  <button onclick="selectSize('${s}', this)" class="size-btn min-w-14 px-4 py-3 text-sm rounded-lg border border-ink/15 hover:border-ink/40 transition-all">${s}</button>
+                `).join('') : '<p class="text-sm text-ink/50">Aucune taille disponible.</p>'}
+              </div>
+            </div>
+
+            <button id="addBtn" onclick="addToCartAction()" class="w-full py-5 rounded-full bg-ink/10 text-ink/40 font-medium cursor-not-allowed transition-all" disabled>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      `
+    }
+
+    window.changeImage = (url, btn) => {
+      const mainImg = document.getElementById('mainProductImage')
+      mainImg.style.opacity = '0'
+      setTimeout(() => {
+        mainImg.src = url
+        mainImg.style.opacity = '1'
+      }, 200)
+
+      document.querySelectorAll('#productContent .grid-cols-3 button').forEach(b => {
+        b.classList.remove('border-terracotta')
+        b.classList.add('border-transparent')
+      })
+      btn.classList.remove('border-transparent')
+      btn.classList.add('border-terracotta')
+    }
+
+    window.selectSize = (size, btn) => {
+      selectedSize = size
+      document.querySelectorAll('.size-btn').forEach(b => {
+        b.classList.remove('bg-terracotta', 'text-white', 'border-terracotta')
+        b.classList.add('border-ink/15')
+      })
+      btn.classList.add('bg-terracotta', 'text-white', 'border-terracotta')
+      btn.classList.remove('border-ink/15')
+
+      const addBtn = document.getElementById('addBtn')
+      addBtn.disabled = false
+      addBtn.classList.remove('bg-ink/10', 'text-ink/40', 'cursor-not-allowed')
+      addBtn.classList.add('bg-terracotta', 'hover:bg-terracotta-dark', 'text-white', 'shadow-lg')
+    }
+
+    window.addToCartAction = () => {
+      if (!selectedSize || !currentProduct) return
+      
+      const variant = currentProduct.product_variants.find(v => v.size === selectedSize)
+      if (!variant) return
+
+      addToCart({
+        productId: currentProduct.id,
+        variantId: variant.id,
+        slug: currentProduct.slug,
+        name: currentProduct.name_fr,
+        priceXof: currentProduct.price_xof,
+        priceEur: currentProduct.price_eur,
+        image: currentProduct.product_images?.[0]?.url,
+        size: selectedSize,
+        qty: 1
+      })
+
+      openCart()
+    }
+
+    initProduct()
   </script>
 </body>
 </html>
