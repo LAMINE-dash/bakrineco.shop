@@ -5,33 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boutique — Bakrine & Co</title>
   
-  <!-- NOUVELLES POLICES : Cormorant Garamond (Titres) + Poppins (Textes) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
   <link rel="stylesheet" href="assets/css/style.css">
 
   <style>
-    /* On force la nouvelle police sur les éléments */
     body { font-family: 'Poppins', sans-serif; }
     h1, h2, h3, .font-serif { font-family: 'Cormorant Garamond', serif !important; }
   </style>
 </head>
-<body class="bg-cream text-ink">
+<body class="bg-cream text-ink overflow-x-hidden">
 
   <div id="header"></div>
 
   <main class="max-w-[1400px] mx-auto px-6 py-20 min-h-[60vh] bg-[#F9F6F0]">
-    <header class="text-center mb-20">
+    <header class="text-center mb-20 reveal">
       <span class="text-xs tracking-[0.4em] text-terracotta uppercase">Boutique</span>
       <h1 class="mt-4 text-6xl md:text-8xl text-forest font-light">Nos <em class="italic text-terracotta">créations</em></h1>
     </header>
 
-    <!-- Zone des filtres -->
     <div id="filters" class="flex flex-wrap justify-center gap-3 mb-16"></div>
-    
-    <!-- Zone des produits -->
     <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12"></div>
   </main>
 
@@ -57,7 +51,6 @@
     </div>
   </aside>
 
-  <!-- SCRIPT -->
   <script type="module">
     import { renderHeader, renderFooter } from './assets/js/layout.js'
     import { products, collections, loadData } from './assets/js/products.js'
@@ -69,6 +62,17 @@
       await loadData()
       afficherFiltres()
       filtrerProduits('all')
+      
+      // Animation du header au chargement
+      setTimeout(() => {
+        const header = document.querySelector('.reveal')
+        if (header) {
+          header.style.transition = 'opacity 1s ease-out, transform 1s ease-out'
+          header.classList.remove('opacity-0', 'translate-y-10')
+          header.style.opacity = '1'
+          header.style.transform = 'translateY(0)'
+        }
+      }, 100)
     }
 
     function afficherFiltres() {
@@ -108,31 +112,37 @@
         return
       }
 
-      grid.innerHTML = produitsAffiches.map(p => {
+      grid.innerHTML = produitsAffiches.map((p, index) => {
         const image = p.product_images?.[0]?.url || 'assets/images/placeholder.jpg'
+        // Délai en cascade pour l'animation
+        const delay = index * 100
+        
         return `
-          <a href="produit.html?slug=${p.slug}" onclick="localStorage.setItem('current-slug', '${p.slug}')" class="group block">
-            
-            <!-- Image -->
+          <a href="produit.html?slug=${p.slug}" onclick="localStorage.setItem('current-slug', '${p.slug}')" class="group block reveal-item opacity-0 translate-y-10" style="transition-delay: ${delay}ms">
             <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-gold/10">
               <img src="${image}" alt="${p.name_fr}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <!-- Prix en petit -->
               <div class="absolute bottom-3 right-3 bg-cream/90 px-2 py-1 text-[10px] font-medium tracking-widest text-forest">
                 ${new Intl.NumberFormat('fr-FR').format(p.price_xof)} FCFA
               </div>
             </div>
-            
-            <!-- Textes bien aérés -->
             <div class="mt-6 text-center space-y-2">
               <p class="text-[10px] text-terracotta/80 uppercase tracking-[0.2em]">${p.fabric || p.category}</p>
               <h3 class="text-xl md:text-2xl text-forest group-hover:text-terracotta transition-colors leading-tight px-2">
                 ${p.name_fr}
               </h3>
             </div>
-
           </a>
         `
       }).join('')
+
+      // Déclencher l'animation d'apparition
+      setTimeout(() => {
+        const items = document.querySelectorAll('.reveal-item')
+        items.forEach(el => {
+          el.style.opacity = '1'
+          el.style.transform = 'translateY(0)'
+        })
+      }, 50)
     }
 
     window.filtrerProduits = filtrerProduits
