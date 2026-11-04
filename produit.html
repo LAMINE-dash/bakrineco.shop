@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Produit — Bakrine & Co</title>
   
-  <!-- SÉCURITÉ ASSOUPLIE (autorise Google Fonts et Lucide) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+  <!-- PLUS DE BALISE CSP ICI, POUR ÉVITER LES BLOCAGES -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -63,6 +62,7 @@
     let selectedSize = null
 
     async function initProduct() {
+      // 1. Récupérer le slug (via URL ou localStorage)
       const urlParams = new URLSearchParams(window.location.search)
       let slug = urlParams.get('slug') || localStorage.getItem('current-slug')
 
@@ -71,8 +71,10 @@
         return
       }
 
+      // 2. Charger les données
       if (products.length === 0) await loadData()
 
+      // 3. Trouver le produit
       currentProduct = products.find(p => p.slug === slug)
 
       if (!currentProduct) {
@@ -80,6 +82,7 @@
         return
       }
 
+      // 4. Afficher
       renderProduct()
       updateCartBadge()
       renderCartDrawer()
@@ -97,6 +100,7 @@
       container.innerHTML = `
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
+          <!-- GALERIE -->
           <div class="space-y-6">
             <div class="aspect-[3/4] rounded-2xl overflow-hidden bg-gold/10">
               <img id="mainProductImage" src="${mainImage}" alt="${currentProduct.name_fr}" class="w-full h-full object-cover transition-opacity duration-300">
@@ -110,6 +114,7 @@
             </div>
           </div>
 
+          <!-- INFOS -->
           <div class="space-y-8 lg:sticky lg:top-28 self-start">
             <div>
               <span class="text-xs tracking-[0.3em] text-terracotta uppercase">${currentProduct.fabric || currentProduct.category}</span>
@@ -140,6 +145,7 @@
       `
     }
 
+    // --- FONCTIONS GLOBALES ---
     window.changeImage = (url, btn) => {
       const mainImg = document.getElementById('mainProductImage')
       mainImg.style.opacity = '0'
