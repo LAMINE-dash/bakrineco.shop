@@ -2,7 +2,7 @@
    WHATSAPP.JS — Génération de la commande
    ============================================================ */
 
-const WHATSAPP_NUMBER = '221768058139' // Votre numéro
+const WHATSAPP_NUMBER = '33 7 65 26 39 17' // Votre numéro
 
 export function buildWhatsAppMessage(cart, customer) {
   const lines = []
