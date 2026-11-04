@@ -8,12 +8,12 @@ export function renderHeader() {
     <header class="sticky top-0 z-50 bg-cream/95 backdrop-blur-md border-b border-ink/5">
       <div class="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
         
-        <!-- Logo plus grand -->
+        <!-- Logo -->
         <a href="index.html" class="font-serif text-3xl md:text-4xl text-forest flex items-baseline gap-1">
           Bakrine & <span class="italic text-terracotta">Co</span>
         </a>
 
-        <!-- Liens plus espacés et plus grands -->
+        <!-- Nav Desktop (caché sur mobile) -->
         <nav class="hidden lg:flex items-center gap-12">
           <a href="index.html" class="text-base text-ink/70 hover:text-terracotta transition-colors">Accueil</a>
           <a href="boutique.html" class="text-base text-ink/70 hover:text-terracotta transition-colors">Boutique</a>
@@ -21,8 +21,10 @@ export function renderHeader() {
           <a href="contact.html" class="text-base text-ink/70 hover:text-terracotta transition-colors">Contact</a>
         </nav>
 
-        <!-- Icône panier -->
-        <div class="flex items-center gap-6">
+        <!-- Actions (Panier + Menu mobile) -->
+        <div class="flex items-center gap-4">
+          
+          <!-- Panier -->
           <button id="cartBtn" class="relative p-2 text-ink hover:text-terracotta transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
@@ -31,11 +33,30 @@ export function renderHeader() {
             </svg>
             <span id="cartCount" class="absolute -top-1 -right-1 bg-terracotta text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
           </button>
+
+          <!-- Bouton Menu Mobile (visible uniquement sur mobile) -->
+          <button id="menuBtn" class="lg:hidden p-2 text-ink hover:text-terracotta transition-colors">
+            <svg id="menuIcon" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
+
         </div>
       </div>
+
+      <!-- Nav Mobile (caché par défaut) -->
+      <nav id="mobileMenu" class="hidden lg:hidden bg-cream border-t border-ink/5">
+        <div class="px-6 py-6 flex flex-col gap-6">
+          <a href="index.html" class="text-lg text-forest hover:text-terracotta transition-colors">Accueil</a>
+          <a href="boutique.html" class="text-lg text-forest hover:text-terracotta transition-colors">Boutique</a>
+          <a href="a-propos.html" class="text-lg text-forest hover:text-terracotta transition-colors">À propos</a>
+          <a href="contact.html" class="text-lg text-forest hover:text-terracotta transition-colors">Contact</a>
+        </div>
+      </nav>
     </header>
   `
 
+  // 1. Gestion du Panier
   const cartBtn = document.getElementById('cartBtn')
   if (cartBtn) {
     cartBtn.addEventListener('click', () => {
@@ -44,6 +65,24 @@ export function renderHeader() {
     })
   }
   updateCartBadge()
+
+  // 2. Gestion du Menu Mobile
+  const menuBtn = document.getElementById('menuBtn')
+  const mobileMenu = document.getElementById('mobileMenu')
+  const menuIcon = document.getElementById('menuIcon')
+
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden')
+      
+      // Changer l'icône (croix / hamburger)
+      if (mobileMenu.classList.contains('hidden')) {
+        menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />'
+      } else {
+        menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />'
+      }
+    })
+  }
 }
 export function renderFooter() {
   const container = document.getElementById('footer')
