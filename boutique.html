@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique — Bakrine & Co</title>
+  
+  <!-- NOUVELLES POLICES : Cormorant Garamond (Titres) + Poppins (Textes) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    /* On force la nouvelle police sur les éléments */
+    body { font-family: 'Poppins', sans-serif; }
+    h1, h2, h3, .font-serif { font-family: 'Cormorant Garamond', serif !important; }
+  </style>
+</head>
+<body class="bg-cream text-ink">
+
+  <div id="header"></div>
+
+  <main class="max-w-[1400px] mx-auto px-6 py-20 min-h-[60vh] bg-[#F9F6F0]">
+    <header class="text-center mb-20">
+      <span class="text-xs tracking-[0.4em] text-terracotta uppercase">Boutique</span>
+      <h1 class="mt-4 text-6xl md:text-8xl text-forest font-light">Nos <em class="italic text-terracotta">créations</em></h1>
+    </header>
+
+    <!-- Zone des filtres -->
+    <div id="filters" class="flex flex-wrap justify-center gap-3 mb-16"></div>
+    
+    <!-- Zone des produits -->
+    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12"></div>
+  </main>
+
+  <div id="footer"></div>
+
+  <!-- DRAWER PANIER -->
+  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60]" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream shadow-2xl z-[70] flex flex-col transition-transform duration-500 translate-x-full">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+      <h2 class="text-2xl text-forest">Panier <span id="cartDrawerCount" class="text-terracotta">(0)</span></h2>
+      <button onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); document.getElementById('cartOverlay').classList.add('hidden'); document.body.style.overflow='';" class="p-2 hover:text-terracotta">✕</button>
+    </div>
+    <div id="cartContent" class="flex-1 overflow-y-auto px-6 py-4"></div>
+    <div class="border-t border-ink/10 px-6 py-5 bg-cream">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-ink/60">Total</span>
+        <div class="text-right">
+          <p id="cartTotalXof" class="text-2xl text-forest">0 FCFA</p>
+          <p id="cartTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
+        </div>
+      </div>
+      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium">Passer commande</a>
+    </div>
+  </aside>
+
+  <!-- SCRIPT -->
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    import { products, collections, loadData } from './assets/js/products.js'
+
+    renderHeader()
+    renderFooter()
+
+    async function initShop() {
+      await loadData()
+      afficherFiltres()
+      filtrerProduits('all')
+    }
+
+    function afficherFiltres() {
+      const container = document.getElementById('filters')
+      let html = `<button onclick="window.filtrerProduits('all')" class="filter-btn active px-6 py-2 rounded-full border border-terracotta bg-terracotta text-white text-xs tracking-wider uppercase transition-all">Tout</button>`
+      
+      collections.forEach(c => {
+        html += `<button onclick="window.filtrerProduits('${c.slug}')" class="filter-btn px-6 py-2 rounded-full border border-ink/15 text-ink/60 hover:border-terracotta hover:text-terracotta text-xs tracking-wider uppercase transition-all">${c.name_fr}</button>`
+      })
+      container.innerHTML = html
+    }
+
+    function filtrerProduits(filtre) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('bg-terracotta', 'text-white', 'border-terracotta')
+        btn.classList.add('text-ink/60', 'border-ink/15')
+      })
+      if (event && event.target) {
+        event.target.classList.add('bg-terracotta', 'text-white', 'border-terracotta')
+        event.target.classList.remove('text-ink/60', 'border-ink/15')
+      }
+
+      let produitsAffiches = products
+      if (filtre !== 'all') {
+        produitsAffiches = products.filter(p => {
+          if (filtre === 'costume-classique') return p.category === 'costume'
+          if (filtre === 'chemise-luxe') return p.category === 'chemise'
+          if (filtre === 'blazer') return p.category === 'blazer'
+          if (filtre === 'tenue-africaine') return p.category !== 'costume' && p.category !== 'chemise' && p.category !== 'blazer'
+          return p.category === filtre
+        })
+      }
+
+      const grid = document.getElementById('productsGrid')
+      if (produitsAffiches.length === 0) {
+        grid.innerHTML = `<p class="col-span-full text-center py-20 text-ink/50">Aucun produit dans cette catégorie.</p>`
+        return
+      }
+
+      grid.innerHTML = produitsAffiches.map(p => {
+        const image = p.product_images?.[0]?.url || 'assets/images/placeholder.jpg'
+        return `
+          <a href="produit.html?slug=${p.slug}" onclick="localStorage.setItem('current-slug', '${p.slug}')" class="group block">
+            
+            <!-- Image -->
+            <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-gold/10">
+              <img src="${image}" alt="${p.name_fr}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <!-- Prix en petit -->
+              <div class="absolute bottom-3 right-3 bg-cream/90 px-2 py-1 text-[10px] font-medium tracking-widest text-forest">
+                ${new Intl.NumberFormat('fr-FR').format(p.price_xof)} FCFA
+              </div>
+            </div>
+            
+            <!-- Textes bien aérés -->
+            <div class="mt-6 text-center space-y-2">
+              <p class="text-[10px] text-terracotta/80 uppercase tracking-[0.2em]">${p.fabric || p.category}</p>
+              <h3 class="text-xl md:text-2xl text-forest group-hover:text-terracotta transition-colors leading-tight px-2">
+                ${p.name_fr}
+              </h3>
+            </div>
+
+          </a>
+        `
+      }).join('')
+    }
+
+    window.filtrerProduits = filtrerProduits
+    initShop()
+  </script>
+</body>
+</html>

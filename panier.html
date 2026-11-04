@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Panier — Bakrine & Co</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-cream text-ink font-sans">
+
+  <div id="header"></div>
+
+  <main class="max-w-7xl mx-auto px-6 py-20 min-h-[60vh]">
+    <header class="mb-12">
+      <a href="boutique.html" class="text-sm text-ink/50 hover:text-terracotta transition-colors inline-flex items-center gap-2 mb-4">
+        ← Continuer les achats
+      </a>
+      <h1 class="font-serif text-4xl md:text-5xl text-forest">Mon panier</h1>
+      <p id="cartItemCount" class="text-ink/60 mt-2">0 article</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      
+      <!-- Liste des articles -->
+      <div class="lg:col-span-2 space-y-6" id="pageCartContent">
+        <!-- Injecté par JS -->
+      </div>
+
+      <!-- Récapitulatif -->
+      <aside class="lg:col-span-1">
+        <div class="lg:sticky lg:top-28 bg-white/50 rounded-2xl p-8 border border-ink/5 space-y-6">
+          <h2 class="font-serif text-2xl text-forest">Récapitulatif</h2>
+          
+          <div class="space-y-3 py-4 border-y border-ink/10">
+            <div class="flex justify-between text-sm">
+              <span class="text-ink/60">Sous-total</span>
+              <span id="pageSubtotal" class="font-medium">0 FCFA</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-ink/60">Livraison</span>
+              <span class="text-forest font-medium">Offerte</span>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-end pt-2">
+            <span class="text-ink/60">Total</span>
+            <div class="text-right">
+              <p id="pageTotalXof" class="font-serif text-3xl text-forest">0 FCFA</p>
+              <p id="pageTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
+            </div>
+          </div>
+
+          <a href="commander.html" class="w-full flex items-center justify-center gap-3 bg-terracotta hover:bg-terracotta-dark transition-colors text-white px-6 py-4 rounded-full font-medium group">
+            Passer commande
+            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <!-- OVERLAY & DRAWER PANIER -->
+  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60] transition-opacity" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream shadow-2xl z-[70] flex flex-col transition-transform duration-500 translate-x-full">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+      <h2 class="font-serif text-2xl text-forest">Panier <span id="cartDrawerCount" class="text-terracotta">(0)</span></h2>
+      <button onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); document.getElementById('cartOverlay').classList.add('hidden'); document.body.style.overflow='';" class="p-2 hover:text-terracotta"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+    </div>
+    <div id="cartContent" class="flex-1 overflow-y-auto px-6 py-4"></div>
+    <div class="border-t border-ink/10 px-6 py-5 bg-cream">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-ink/60">Total</span>
+        <div class="text-right">
+          <p id="cartTotalXof" class="font-serif text-2xl text-forest">0 FCFA</p>
+          <p id="cartTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
+        </div>
+      </div>
+      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium transition-colors">Passer commande</a>
+    </div>
+  </aside>
+
+  <!-- SCRIPTS -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    import { getCart, updateQty, removeFromCart } from './assets/js/cart.js'
+
+    renderHeader()
+    renderFooter()
+
+    // Fonction pour afficher le panier dans la page
+    function renderPageCart() {
+      const cart = getCart()
+      const container = document.getElementById('pageCartContent')
+      const countEl = document.getElementById('cartItemCount')
+      
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-20 bg-white/50 rounded-2xl border border-ink/5">
+            <p class="text-ink/50 mb-4">Votre panier est vide</p>
+            <a href="boutique.html" class="text-terracotta hover:underline">Découvrir la boutique</a>
+          </div>
+        `
+        countEl.textContent = '0 article'
+        document.getElementById('pageSubtotal').textContent = '0 FCFA'
+        document.getElementById('pageTotalXof').textContent = '0 FCFA'
+        document.getElementById('pageTotalEur').textContent = '≈ 0.00 €'
+        return
+      }
+
+      countEl.textContent = `${cart.length} article${cart.length > 1 ? 's' : ''}`
+      
+      const totalXof = cart.reduce((s, i) => s + i.priceXof * i.qty, 0)
+      const totalEur = cart.reduce((s, i) => s + i.priceEur * i.qty, 0)
+
+      document.getElementById('pageSubtotal').textContent = `${new Intl.NumberFormat('fr-FR').format(totalXof)} FCFA`
+      document.getElementById('pageTotalXof').textContent = `${new Intl.NumberFormat('fr-FR').format(totalXof)} FCFA`
+      document.getElementById('pageTotalEur').textContent = `≈ ${totalEur.toFixed(2)} €`
+
+      container.innerHTML = cart.map(item => `
+        <article class="flex gap-6 pb-6 border-b border-ink/10 last:border-0">
+          <a href="produit.html?slug=${item.slug}" class="w-24 h-32 sm:w-32 sm:h-40 rounded-xl overflow-hidden bg-gold/10 flex-shrink-0">
+            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+          </a>
+          
+          <div class="flex-1 flex flex-col justify-between">
+            <div>
+              <a href="produit.html?slug=${item.slug}" class="font-serif text-xl text-forest hover:text-terracotta transition-colors line-clamp-1">${item.name}</a>
+              <p class="text-sm text-ink/50 mt-1">Taille : ${item.size}</p>
+              <p class="text-terracotta font-medium mt-2">${new Intl.NumberFormat('fr-FR').format(item.priceXof)} FCFA</p>
+            </div>
+
+            <div class="flex items-center justify-between gap-4 mt-4">
+              <div class="flex items-center border border-ink/15 rounded-full">
+                <button onclick="window.pageUpdateQty('${item.variantId}', ${item.qty - 1})" class="p-2 hover:text-terracotta transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <span class="w-8 text-center text-sm font-medium">${item.qty}</span>
+                <button onclick="window.pageUpdateQty('${item.variantId}', ${item.qty + 1})" class="p-2 hover:text-terracotta transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+
+              <span class="font-serif text-lg text-forest hidden sm:block">
+                ${new Intl.NumberFormat('fr-FR').format(item.priceXof * item.qty)} FCFA
+              </span>
+
+              <button onclick="window.pageRemoveItem('${item.variantId}')" class="p-2 text-ink/30 hover:text-red-500 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+      `).join('')
+    }
+
+    // Actions globales
+    window.pageUpdateQty = (id, qty) => {
+      updateQty(id, qty)
+      renderPageCart()
+    }
+    window.pageRemoveItem = (id) => {
+      removeFromCart(id)
+      renderPageCart()
+    }
+
+    // Afficher au chargement
+    renderPageCart()
+    
+    if (window.lucide) window.lucide.createIcons()
+  </script>
+</body>
+</html>

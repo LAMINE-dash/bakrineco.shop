@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bakrine & Co — L'élégance africaine</title>
+  <meta name="description" content="Boutique de tenues africaines haut de gamme, costumes et chemises en lin.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  
+  <!-- Lottie pour les icônes animées -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+</head>
+<body class="bg-cream text-ink font-sans">
+
+  <div id="header"></div>
+
+  <main>
+    <!-- HERO -->
+    <section class="relative min-h-[85vh] flex items-center justify-center bg-forest overflow-hidden">
+      <img src="https://wamrraarelxsmiksoqhe.supabase.co/storage/v1/object/public/products/costume-mandarin/WhatsApp%20Image%202026-09-22%20at%2019.40.45%20(1).jpeg" class="absolute inset-0 w-full h-full object-cover opacity-50" />
+      <div class="absolute inset-0" style="background-color: rgba(27, 67, 50, 0.75);"></div>
+      
+      <div class="relative z-10 text-center px-6 max-w-4xl">
+        <div class="flex items-center justify-center gap-4 mb-6">
+          <span class="w-12 h-px bg-gold"></span>
+          <span class="text-xs tracking-[0.4em] text-gold uppercase">Collection 2026</span>
+          <span class="w-12 h-px bg-gold"></span>
+        </div>
+        <h1 class="font-serif text-6xl md:text-8xl text-cream leading-tight mb-8 text-balance">
+          Chemise de luxe <br><em class="italic text-gold font-light">sur mesure</em>
+        </h1>
+        <p class="text-cream/80 text-lg md:text-xl mb-10 font-light">Des tenues uniques, tissées avec passion</p>
+        <a href="boutique.html" class="inline-block bg-terracotta hover:bg-terracotta-dark text-white px-10 py-4 rounded-full font-medium transition-all shadow-lg shadow-terracotta/20 hover:-translate-y-0.5">
+          Découvrir la boutique
+        </a>
+      </div>
+    </section>
+
+
+    <!-- COLLECTIONS -->
+    <section class="py-24 max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="text-xs tracking-[0.4em] text-terracotta uppercase">Collections</span>
+        <h2 class="mt-4 text-4xl md:text-5xl font-serif text-forest">Explorez nos <em class="italic text-terracotta">univers</em></h2>
+      </div>
+      <div id="collections-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Injecté par JS -->
+      </div>
+    </section>
+     <!-- AVANTAGES (Icônes Lottie) -->
+    <section class="bg-forest text-cream border-y border-gold/10 py-12">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-16 h-16"><div id="icon-truck" class="w-full h-full"></div></div>
+            <h3 class="font-serif text-lg">Livraison mondiale</h3>
+            <p class="text-[10px] uppercase tracking-widest text-cream/50">50+ pays desservis</p>
+          </div>
+
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-16 h-16"><div id="icon-shield" class="w-full h-full"></div></div>
+            <h3 class="font-serif text-lg">Paiement sécurisé</h3>
+            <p class="text-[10px] uppercase tracking-widest text-cream/50">Via WhatsApp</p>
+          </div>
+
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-16 h-16"><div id="icon-sparkle" class="w-full h-full"></div></div>
+            <h3 class="font-serif text-lg">Fait main</h3>
+            <p class="text-[10px] uppercase tracking-widest text-cream/50">Pièces uniques</p>
+          </div>
+
+          <div class="flex flex-col items-center gap-3">
+            <div class="w-16 h-16"><div id="icon-heart" class="w-full h-full"></div></div>
+            <h3 class="font-serif text-lg">Éthique</h3>
+            <p class="text-[10px] uppercase tracking-widest text-cream/50">Artisans valorisés</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- NOUVEAUTÉS -->
+    <section class="py-24 bg-cream/40">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex justify-between items-end mb-12 border-b border-ink/10 pb-6">
+          <h2 class="font-serif text-4xl text-forest">Dernières <em class="italic text-terracotta">créations</em></h2>
+          <a href="boutique.html" class="text-sm text-ink/50 hover:text-terracotta">Voir tout →</a>
+        </div>
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Injecté par JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <!-- DRAWER PANIER -->
+  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60] transition-opacity" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream shadow-2xl z-[70] flex flex-col transition-transform duration-500 translate-x-full">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+      <h2 class="font-serif text-2xl text-forest">Panier <span id="cartDrawerCount" class="text-terracotta">(0)</span></h2>
+      <button onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); document.getElementById('cartOverlay').classList.add('hidden'); document.body.style.overflow='';" class="p-2 hover:text-terracotta">✕</button>
+    </div>
+    <div id="cartContent" class="flex-1 overflow-y-auto px-6 py-4"></div>
+    <div class="border-t border-ink/10 px-6 py-5 bg-cream">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-ink/60">Total</span>
+        <div class="text-right">
+          <p id="cartTotalXof" class="font-serif text-2xl text-forest">0 FCFA</p>
+          <p id="cartTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
+        </div>
+      </div>
+      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium transition-colors">Passer commande</a>
+    </div>
+  </aside>
+
+  <!-- SCRIPTS -->
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    import { products, collections, loadData } from './assets/js/products.js'
+    
+    renderHeader()
+    renderFooter()
+
+    async function initHome() {
+      // 1. Charger les données
+      await loadData()
+      
+      // 2. Afficher les collections (version classique avec grille)
+      const collectionsGrid = document.getElementById('collections-grid')
+      if (collectionsGrid) {
+        collectionsGrid.innerHTML = collections.slice(0, 4).map(c => `
+          <a href="boutique.html?category=${c.slug}" class="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-gold/10">
+            <img src="${c.image_url}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div class="absolute inset-0 bg-gradient-to-t from-forest/90 via-forest/20 to-transparent"></div>
+            <div class="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+              <div>
+                <h3 class="font-serif text-2xl text-cream">${c.name_fr}</h3>
+                <p class="text-[10px] text-cream/60 uppercase tracking-widest mt-1">Découvrir</p>
+              </div>
+              <span class="w-8 h-8 rounded-full border border-cream/30 flex items-center justify-center group-hover:bg-terracotta group-hover:border-terracotta transition-colors">
+                <svg class="w-4 h-4 text-cream" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
+              </span>
+            </div>
+          </a>
+        `).join('')
+      }
+
+      // 3. Afficher les produits
+      const productsGrid = document.getElementById('products-grid')
+      if (productsGrid) {
+        productsGrid.innerHTML = products.slice(0, 4).map(p => `
+          <a href="produit.html?slug=${p.slug}" onclick="localStorage.setItem('current-slug', '${p.slug}')" class="group block">
+            <div class="relative aspect-[3/4] overflow-hidden rounded-xl bg-gold/10">
+              <img src="${p.product_images?.[0]?.url}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            </div>
+            <div class="mt-4 space-y-1">
+              <p class="text-[10px] text-ink/40 uppercase tracking-widest">${p.fabric || p.category}</p>
+              <h3 class="font-serif text-lg text-forest group-hover:text-terracotta transition-colors line-clamp-1">${p.name_fr}</h3>
+              <p class="text-base font-medium text-terracotta">${new Intl.NumberFormat('fr-FR').format(p.price_xof)} FCFA</p>
+            </div>
+          </a>
+        `).join('')
+      }
+
+      // 4. Initialiser les icônes Lottie
+      // ⚠️ Assurez-vous que les fichiers .json sont dans assets/icons/
+      const lottieIcons = [
+        { id: 'icon-truck', path: 'assets/icons/truck.json' },
+        { id: 'icon-shield', path: 'assets/icons/shield.json' },
+        { id: 'icon-sparkle', path: 'assets/icons/sparkle.json' },
+        { id: 'icon-heart', path: 'assets/icons/heart.json' }
+      ]
+
+      lottieIcons.forEach(icon => {
+        if (document.getElementById(icon.id)) {
+          lottie.loadAnimation({
+            container: document.getElementById(icon.id),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: icon.path
+          })
+        }
+      })
+    }
+
+    initHome()
+  </script>
+</body>
+</html>

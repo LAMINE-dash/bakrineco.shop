@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merci — Bakrine & Co</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-cream text-ink font-sans">
+
+  <div id="header"></div>
+
+  <main class="max-w-3xl mx-auto px-6 py-24 text-center">
+    
+    <div class="w-24 h-24 mx-auto bg-forest text-cream rounded-full flex items-center justify-center mb-8">
+      <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+
+    <span class="text-xs tracking-[0.3em] text-terracotta uppercase">Merci</span>
+    <h1 class="mt-4 font-serif text-5xl text-forest mb-6">Commande envoyée</h1>
+    
+    <p class="text-lg text-ink/70 leading-relaxed mb-12">
+      Nous avons bien reçu votre commande. Nous vous contactons très vite sur <strong>WhatsApp</strong> pour confirmer la disponibilité et organiser le paiement.
+    </p>
+
+    <div class="bg-gold/10 rounded-2xl p-8 text-left max-w-md mx-auto mb-12">
+      <h3 class="font-serif text-lg text-forest mb-4">Et maintenant ?</h3>
+      <ol class="space-y-3 text-sm text-ink/70 list-decimal list-inside">
+        <li>Confirmation WhatsApp dans l'heure</li>
+        <li>Organisation du paiement</li>
+        <li>Préparation et expédition de votre colis</li>
+        <li>Suivi jusqu'à la livraison</li>
+      </ol>
+    </div>
+
+    <a href="boutique.html" class="inline-block bg-terracotta hover:bg-terracotta-dark text-white px-8 py-4 rounded-full font-medium transition-colors">
+      Continuer les achats
+    </a>
+  </main>
+
+  <div id="footer"></div>
+
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    renderHeader()
+    renderFooter()
+  </script>
+</body>
+</html>

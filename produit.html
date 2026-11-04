@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produit — Bakrine & Co</title>
+  <meta name="description" content="Découvrez ce produit de la collection Bakrine & Co.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-cream text-ink font-sans">
+
+  <div id="header"></div>
+  <main class="max-w-7xl mx-auto px-6 py-16 min-h-[60vh]" id="productContent"></main>
+  <div id="footer"></div>
+
+  <!-- DRAWER PANIER -->
+  <div id="cartOverlay" class="hidden fixed inset-0 bg-ink/50 backdrop-blur-sm z-[60] transition-opacity" onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); this.classList.add('hidden'); document.body.style.overflow='';"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 bottom-0 w-full max-w-md bg-cream shadow-2xl z-[70] flex flex-col transition-transform duration-500 translate-x-full">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-ink/10">
+      <h2 class="font-serif text-2xl text-forest">Panier <span id="cartDrawerCount" class="text-terracotta">(0)</span></h2>
+      <button onclick="document.getElementById('cartDrawer').classList.add('translate-x-full'); document.getElementById('cartOverlay').classList.add('hidden'); document.body.style.overflow='';" class="p-2 hover:text-terracotta">✕</button>
+    </div>
+    <div id="cartContent" class="flex-1 overflow-y-auto px-6 py-4"></div>
+    <div class="border-t border-ink/10 px-6 py-5 bg-cream">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-ink/60">Total</span>
+        <div class="text-right">
+          <p id="cartTotalXof" class="font-serif text-2xl text-forest">0 FCFA</p>
+          <p id="cartTotalEur" class="text-xs text-ink/50">≈ 0.00 €</p>
+        </div>
+      </div>
+      <a href="commander.html" class="block w-full text-center bg-terracotta hover:bg-terracotta-dark text-white px-6 py-4 rounded-full font-medium transition-colors">Passer commande</a>
+    </div>
+  </aside>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    import { initProduct } from './assets/js/produit.js'
+    import { updateCartBadge, renderCartDrawer } from './assets/js/cart.js'
+
+    renderHeader()
+    renderFooter()
+    initProduct().then(() => {
+      updateCartBadge()
+      renderCartDrawer()
+      if (window.lucide) window.lucide.createIcons()
+    })
+  </script>
+</body>
+</html>

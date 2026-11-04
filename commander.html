@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commander — Bakrine & Co</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://wamrraarelxsmiksoqhe.supabase.co; connect-src 'self' https://wamrraarelxsmiksoqhe.supabase.co;">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-cream text-ink font-sans">
+
+  <div id="header"></div>
+
+  <main class="max-w-7xl mx-auto px-6 py-20">
+    
+    <header class="text-center mb-16">
+      <span class="text-xs tracking-[0.3em] text-terracotta uppercase">Commande</span>
+      <h1 class="mt-4 font-serif text-4xl md:text-5xl text-forest">Finalisez votre commande</h1>
+      <p class="mt-4 text-ink/60 max-w-lg mx-auto">Remplissez vos informations. Vous serez redirigé vers WhatsApp pour confirmer.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+      
+      <!-- Formulaire -->
+      <div class="lg:col-span-3">
+        <form id="orderForm" class="space-y-6 bg-white/50 p-8 md:p-10 rounded-3xl border border-ink/5">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Nom complet *</label>
+              <input type="text" name="name" required class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Téléphone *</label>
+              <input type="tel" name="phone" required class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Email *</label>
+            <input type="email" name="email" required class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Adresse complète *</label>
+            <input type="text" name="address" required class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium mb-2">Pays *</label>
+              <input type="text" name="country" required class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Ville</label>
+              <input type="text" name="city" class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2">Notes (optionnel)</label>
+            <textarea name="notes" rows="3" class="w-full px-5 py-3 rounded-xl border border-ink/15 focus:outline-none focus:border-terracotta bg-cream"></textarea>
+          </div>
+
+          <button type="button" onclick="window.sendWhatsAppOrder()" class="w-full py-4 bg-[#25D366] hover:bg-[#1faa52] text-white rounded-full text-lg font-medium transition-colors shadow-lg shadow-green-500/20">
+            Commander via WhatsApp
+          </button>
+        </form>
+      </div>
+
+      <!-- Récapitulatif -->
+      <div class="lg:col-span-2">
+        <div class="bg-cream rounded-3xl p-8 border border-ink/5 lg:sticky lg:top-28">
+          <div id="orderSummary">
+            <!-- Le JS va injecter le récapitulatif ici -->
+            <p class="text-center text-ink/50 py-10">Chargement du panier...</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module">
+    import { renderHeader, renderFooter } from './assets/js/layout.js'
+    import { getCart, clearCart } from './assets/js/cart.js'
+    import { openWhatsApp } from './assets/js/whatsapp.js'
+
+    renderHeader()
+    renderFooter()
+
+    setTimeout(() => {
+      const cart = getCart()
+      const summaryContainer = document.getElementById('orderSummary')
+      
+      // 1. Si le panier est vide, on redirige
+      if (cart.length === 0) {
+        window.location.href = 'boutique.html'
+        return
+      }
+
+      // 2. Générer le récapitulatif HTML
+      const totalXof = cart.reduce((s, i) => s + i.priceXof * i.qty, 0)
+      const totalEur = cart.reduce((s, i) => s + i.priceEur * i.qty, 0)
+
+      const itemsHtml = cart.map(item => `
+        <div class="flex gap-4 py-3 border-b border-ink/5 last:border-0">
+          <img src="${item.image}" class="w-14 h-16 object-cover rounded bg-gold/10">
+          <div>
+            <p class="font-serif text-sm text-forest">${item.name}</p>
+            <p class="text-xs text-ink/50">Taille ${item.size} × ${item.qty}</p>
+            <p class="text-sm text-terracotta">${new Intl.NumberFormat('fr-FR').format(item.priceXof * item.qty)} FCFA</p>
+          </div>
+        </div>
+      `).join('')
+
+      summaryContainer.innerHTML = `
+        <h2 class="font-serif text-2xl text-forest mb-6">Votre commande</h2>
+        <div class="space-y-2 mb-6">${itemsHtml}</div>
+        <div class="border-t border-ink/10 pt-4">
+          <div class="flex justify-between items-end">
+            <span class="text-ink/60">Total</span>
+            <div class="text-right">
+              <p class="font-serif text-2xl text-forest">${new Intl.NumberFormat('fr-FR').format(totalXof)} FCFA</p>
+              <p class="text-xs text-ink/50">≈ ${totalEur.toFixed(2)} €</p>
+            </div>
+          </div>
+        </div>
+      `
+
+      // 3. Fonction d'envoi
+      window.sendWhatsAppOrder = () => {
+        const name = document.querySelector('input[name="name"]').value
+        const phone = document.querySelector('input[name="phone"]').value
+        const email = document.querySelector('input[name="email"]').value
+        const address = document.querySelector('input[name="address"]').value
+        const country = document.querySelector('input[name="country"]').value
+        const city = document.querySelector('input[name="city"]').value
+        const notes = document.querySelector('textarea[name="notes"]').value
+
+        if (!name || !phone || !email || !address || !country) {
+          alert("Veuillez remplir tous les champs obligatoires (*).")
+          return
+        }
+
+        const customer = { name, phone, email, address, country, city, notes }
+
+        // Ouvre WhatsApp avec le message
+        openWhatsApp(cart, customer)
+        
+        // Vide le panier et redirige
+        clearCart()
+        setTimeout(() => {
+          window.location.href = 'merci.html'
+        }, 1000)
+      }
+    }, 200)
+  </script>
+</body>
+</html>
