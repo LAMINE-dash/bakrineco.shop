@@ -87,54 +87,22 @@
   <div id="footer"></div>
 
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script type="module">
+   <script type="module">
     import { renderHeader, renderFooter } from './assets/js/layout.js'
     import { getCart, clearCart } from './assets/js/cart.js'
-    import { openWhatsApp } from './assets/js/whatsapp.js'
+    import { buildWhatsAppMessage } from './assets/js/whatsapp.js' // On importe juste le message
 
     renderHeader()
     renderFooter()
 
     setTimeout(() => {
       const cart = getCart()
-      const summaryContainer = document.getElementById('orderSummary')
       
-      // 1. Si le panier est vide, on redirige
       if (cart.length === 0) {
         window.location.href = 'boutique.html'
         return
       }
 
-      // 2. Générer le récapitulatif HTML
-      const totalXof = cart.reduce((s, i) => s + i.priceXof * i.qty, 0)
-      const totalEur = cart.reduce((s, i) => s + i.priceEur * i.qty, 0)
-
-      const itemsHtml = cart.map(item => `
-        <div class="flex gap-4 py-3 border-b border-ink/5 last:border-0">
-          <img src="${item.image}" class="w-14 h-16 object-cover rounded bg-gold/10">
-          <div>
-            <p class="font-serif text-sm text-forest">${item.name}</p>
-            <p class="text-xs text-ink/50">Taille ${item.size} × ${item.qty}</p>
-            <p class="text-sm text-terracotta">${new Intl.NumberFormat('fr-FR').format(item.priceXof * item.qty)} FCFA</p>
-          </div>
-        </div>
-      `).join('')
-
-      summaryContainer.innerHTML = `
-        <h2 class="font-serif text-2xl text-forest mb-6">Votre commande</h2>
-        <div class="space-y-2 mb-6">${itemsHtml}</div>
-        <div class="border-t border-ink/10 pt-4">
-          <div class="flex justify-between items-end">
-            <span class="text-ink/60">Total</span>
-            <div class="text-right">
-              <p class="font-serif text-2xl text-forest">${new Intl.NumberFormat('fr-FR').format(totalXof)} FCFA</p>
-              <p class="text-xs text-ink/50">≈ ${totalEur.toFixed(2)} €</p>
-            </div>
-          </div>
-        </div>
-      `
-
-      // 3. Fonction d'envoi
       window.sendWhatsAppOrder = () => {
         const name = document.querySelector('input[name="name"]').value
         const phone = document.querySelector('input[name="phone"]').value
@@ -142,19 +110,19 @@
         const address = document.querySelector('input[name="address"]').value
         const country = document.querySelector('input[name="country"]').value
         const city = document.querySelector('input[name="city"]').value
-        const notes = document.querySelector('textarea[name="notes"]').value
 
         if (!name || !phone || !email || !address || !country) {
           alert("Veuillez remplir tous les champs obligatoires (*).")
           return
         }
 
-        const customer = { name, phone, email, address, country, city, notes }
-
-        // Ouvre WhatsApp avec le message
-        openWhatsApp(cart, customer)
+        const customer = { name, phone, email, address, country, city, notes: '' }
         
-        // Vide le panier et redirige
+        // ON FORCE LE NUMÉRO ICI
+        const message = buildWhatsAppMessage(cart, customer)
+        const url = `https://wa.me/33765263917?text=${encodeURIComponent(message)}`
+        window.open(url, '_blank')
+
         clearCart()
         setTimeout(() => {
           window.location.href = 'merci.html'
